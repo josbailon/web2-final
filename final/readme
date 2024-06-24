@@ -1,0 +1,46 @@
+-- Creación de la tabla clientes
+CREATE TABLE clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    telefono VARCHAR(20),
+    direccion VARCHAR(255),
+    email VARCHAR(255)
+);
+
+-- Creación de la tabla carros
+CREATE TABLE carros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    marca VARCHAR(255),
+    modelo VARCHAR(255),
+    color VARCHAR(50),
+    placa VARCHAR(20) UNIQUE,
+    propietario_id INT,
+    FOREIGN KEY (propietario_id) REFERENCES clientes(id)
+);
+
+-- Creación de la tabla ingresos
+CREATE TABLE ingresos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_entrada DATETIME,
+    vehiculo_id INT,
+    FOREIGN KEY (vehiculo_id) REFERENCES carros(id)
+);
+
+-- Creación de la tabla salidas
+CREATE TABLE salidas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_salida DATETIME,
+    ingreso_id INT,
+    FOREIGN KEY (ingreso_id) REFERENCES ingresos(id)
+);
+
+-- Creación de la tabla pagos
+CREATE TABLE pagos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    monto DECIMAL(10, 2),
+    metodo_pago VARCHAR(100),
+    fecha_pago DATE,
+    ingreso_id INT,
+    FOREIGN KEY (ingreso_id) REFERENCES ingresos(id)
+);
