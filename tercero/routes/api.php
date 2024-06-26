@@ -29,5 +29,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('parkingfees', ParkingFeeController::class);
     Route::get('/reports/clients/pdf', [ReportController::class, 'pdfReport']);
 Route::get('/reports/clients/excel', [ReportController::class, 'excelReport']);
+
+// Rutas para reportes de vehículos
+Route::get('/reports/vehicles/pdf', [ReportController::class, 'pdfReportVehicles']);
+Route::get('/reports/vehicles/excel', [ReportController::class, 'excelReportVehicles']);
+
+// Rutas para reportes de pagos
+Route::get('/reports/payments/pdf', [ReportController::class, 'pdfReportPayments']);
+Route::get('/reports/payments/excel', [ReportController::class, 'excelReportPayments']);
+
+// Rutas para reportes de tarifas de estacionamiento
+Route::get('/reports/parking_fees/pdf', [ReportController::class, 'pdfReportParkingFees']);
+Route::get('/reports/parking_fees/excel', [ReportController::class, 'excelReportParkingFees']);
 });
 
