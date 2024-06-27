@@ -1,45 +1,36 @@
-package controllers/websocket
+// websocket_controller.go
+
+package controllers/websocket_controller
 
 import (
+    "net/http"
+
     "github.com/labstack/echo/v4"
     "github.com/gorilla/websocket"
-    "net/http"
 )
 
-var (
-    upgrader = websocket.Upgrader{
-        CheckOrigin: func(r *http.Request) bool {
-            // Allow all connections by default
-            return true
-        },
-    }
-)
+var upgrader = websocket.Upgrader{
+    CheckOrigin: func(r *http.Request) bool {
+        return true // Permitir todas las conexiones WebSocket
+    },
+}
 
+// WebSocketHandler maneja las solicitudes WebSocket
 func WebSocketHandler(c echo.Context) error {
-    // Upgrade HTTP connection to WebSocket
-    ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
+    conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
     if err != nil {
         return err
     }
-    defer ws.Close()
+    defer conn.Close()
 
-    // Echo loop
+    // Ejemplo de bucle de escucha y respuesta para WebSocket
     for {
-        // Read message from client
-        _, msg, err := ws.ReadMessage()
+        messageType, p, err := conn.ReadMessage()
         if err != nil {
-            break
+            return err
         }
-
-        // Print received message
-        c.Logger().Infof("Received message: %s", msg)
-
-        // Write message back to client
-        err = ws.WriteMessage(websocket.TextMessage, msg)
-        if err != nil {
-            break
+        if err := conn.WriteMessage(messageType, p); err != nil {
+            return err
         }
     }
-
-    return nil
 }

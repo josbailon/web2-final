@@ -1,4 +1,4 @@
-// controllers/auth_controller.go
+// auth_controller.go
 
 package controllers/auth_controller
 
@@ -6,36 +6,37 @@ import (
     "net/http"
 
     "github.com/labstack/echo/v4"
-    "project/internal/middleware"
 )
 
-func ProtectedRoute(c echo.Context) error {
-    username := c.Get("username").(string)
-    return c.String(http.StatusOK, "Usuario autenticado: "+username)
+// LoginHandler maneja la solicitud de inicio de sesión
+func LoginHandler(c echo.Context) error {
+    username := c.FormValue("username")
+    password := c.FormValue("password")
+
+    // Aquí deberías validar las credenciales (por ejemplo, consultar una base de datos)
+    // y verificar si el usuario y la contraseña son válidos.
+
+    // Ejemplo de validación básica (deberías implementar la lógica real de autenticación)
+    if username == "usuario" && password == "contraseña" {
+        // Si las credenciales son válidas, podrías generar un token de sesión (JWT, por ejemplo)
+        token := "token_de_ejemplo"
+
+        // Devolver el token como respuesta
+        return c.JSON(http.StatusOK, map[string]string{
+            "token": token,
+        })
+    }
+
+    // Si las credenciales no son válidas, devolver un mensaje de error
+    return echo.ErrUnauthorized
 }
 
-// main.go
+// LogoutHandler maneja la solicitud de cierre de sesión
+func LogoutHandler(c echo.Context) error {
+    // Aquí podrías invalidar o eliminar el token de sesión actual si es necesario
 
-package main
-
-import (
-    "github.com/labstack/echo/v4"
-    "project/internal/controllers"
-    "project/internal/middleware"
-)
-
-func main() {
-    e := echo.New()
-
-    // Middleware
-    e.Use(middleware.JWTAuthMiddleware)
-
-    // Rutas protegidas con JWT
-    api := e.Group("/api")
-    api.Use(middleware.JWTAuthMiddleware)
-
-    // Ejemplo de ruta protegida
-    api.GET("/protected", controllers.ProtectedRoute)
-
-    e.Logger.Fatal(e.Start(":8080"))
+    // Devolver una respuesta exitosa de cierre de sesión
+    return c.JSON(http.StatusOK, map[string]string{
+        "message": "Cierre de sesión exitoso",
+    })
 }

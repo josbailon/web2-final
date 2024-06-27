@@ -1,10 +1,24 @@
-// schema.go
+// resolvers.go
 
-package graphql/Schema
+package graphql/resolvers
 
 import (
+    "errors"
+    "strconv"
+
     "github.com/graphql-go/graphql"
 )
+
+// Mock data para propósitos de ejemplo
+var pagosData = map[int]*Pago{
+    1: {ID: 1, Monto: 100.50, Descripcion: "Pago de ejemplo", Estado: "Pagado"},
+    2: {ID: 2, Monto: 75.20, Descripcion: "Otro pago", Estado: "Pendiente"},
+}
+
+var vehiculosData = map[int]*Vehiculo{
+    1: {ID: 1, Marca: "Toyota", Modelo: "Corolla", Año: 2022},
+    2: {ID: 2, Marca: "Honda", Modelo: "Civic", Año: 2023},
+}
 
 // Definición de tipos GraphQL (Pago y Vehiculo)
 var pagoType = graphql.NewObject(
@@ -72,10 +86,32 @@ var RootQuery = graphql.NewObject(graphql.ObjectConfig{
     },
 })
 
-// SchemaConfig contiene la configuración del esquema GraphQL
-var SchemaConfig = graphql.SchemaConfig{
-    Query: RootQuery,
+// Función resolver para el campo "pago"
+func resolvePago(params graphql.ResolveParams) (interface{}, error) {
+    id, ok := params.Args["id"].(int)
+    if !ok {
+        return nil, errors.New("ID de pago no válido")
+    }
+
+    pago, found := pagosData[id]
+    if !found {
+        return nil, errors.New("Pago no encontrado")
+    }
+
+    return pago, nil
 }
 
-// Schema representa el esquema GraphQL de la aplicación
-var Schema, _ = graphql.NewSchema(SchemaConfig)
+// Función resolver para el campo "vehiculo"
+func resolveVehiculo(params graphql.ResolveParams) (interface{}, error) {
+    id, ok := params.Args["id"].(int)
+    if !ok {
+        return nil, errors.New("ID de vehículo no válido")
+    }
+
+    vehiculo, found := vehiculosData[id]
+    if !found {
+        return nil, errors.New("Vehículo no encontrado")
+    }
+
+    return vehiculo, nil
+}
