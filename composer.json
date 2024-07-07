@@ -1,0 +1,6 @@
+{
+    "require": {
+        "barryvdh/laravel-dompdf": "*",
+        "maatwebsite/excel": "*"
+    }
+}
