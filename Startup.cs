@@ -1,57 +1,31 @@
-﻿using Microsoft.Owin;
-using Microsoft.Owin.Security;
+﻿using System;
+using Microsoft.Owin;
 using Microsoft.Owin.Security.Jwt;
+using Microsoft.Owin.Security;
 using Owin;
-using System;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Web.Http;
+using Microsoft.Owin.Security.DataHandler.Encoder;
 
-[assembly: OwinStartup(typeof(TA2PARQUEADERO.Startup))]
-
-namespace TA2PARQUEADERO
-{
-    public class Startup
+public class Startup
+{  //Esta clase configurará OWIN para usar JWT.
+    public void Configuration(IAppBuilder app)
     {
-        public void Configuration(IAppBuilder app)
+        var issuer = "yourIssuer";
+        var audience = "yourAudience";
+        var secret = TextEncodings.Base64Url.Decode("yourBase64EncodedSecret");
+
+        app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions
         {
-            HttpConfiguration config = new HttpConfiguration();
-
-            config.MapHttpAttributeRoutes();
-
-            ConfigureOAuth(app);
-
-            config.EnableCors();
-
-            app.UseWebApi(config);
-        }
-
-        public void ConfigureOAuth(IAppBuilder app)
-        {
-            var issuer = "Evelyn"; // Reemplaza con tu emisor (issuer)
-            var audience = "Evelyn"; // Reemplaza con tu audiencia (audience)
-            var secretKey = "Evelyn123"; // Reemplaza con tu clave secreta
-
-            var tokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            AuthenticationMode = AuthenticationMode.Active,
+            TokenValidationParameters = new TokenValidationParameters()
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer,
                 ValidAudience = audience,
-                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-                ClockSkew = TimeSpan.Zero // Opcional: ajusta la tolerancia de tiempo para la expiración del token
-            };
-
-            // Configuración de JWT Bearer Authentication
-            var jwtOptions = new JwtBearerAuthenticationOptions
-            {
-                AuthenticationMode = Microsoft.Owin.Security.AuthenticationMode.Active,
-                TokenValidationParameters = tokenValidationParameters
-            };
-
-            app.UseJwtBearerAuthentication(jwtOptions);
-        }
+                IssuerSigningKey = new SymmetricSecurityKey(secret)
+            }
+        });
     }
 }
 
