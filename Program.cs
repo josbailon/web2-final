@@ -2,15 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using PARQUEADERO2.Repositories;
-using PARQUEADERO2.Services;
-using PARQUEADERO2.ServicesInterfaces;
-using PARQUEADERO2.Interfaces;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-using PARQUEADERO2.Interfaces;
-using PARQUEADERO2.Repositories;
-using PARQUEADERO2.Services;
-using PARQUEADERO2.ServicesInterfaces;
+using PARQUEADEROFINAL.Repositories;
+using PARQUEADEROFINAL.Services;
+using PARQUEADEROFINAL.ServicesInterfaces;
+using PARQUEADEROFINAL.Interfaces;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +21,7 @@ builder.Services.AddControllers()
 // Agregar servicios de Swagger
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PARQUEADERO2", Version = "EVELYN" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PARQUEADERO", Version = "EVELYN" });
 });
 
 // Registro de servicios
@@ -69,7 +65,7 @@ try
 
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "APPLICACION WEB2");
         c.RoutePrefix = string.Empty; // Para servir Swagger UI en la raíz (http://localhost:5006/)
     });
 
@@ -82,6 +78,9 @@ catch (Exception ex)
     // Loggear la excepción
     Console.WriteLine($"Excepción no controlada: {ex}");
 }
+
+
+
 
 
 
