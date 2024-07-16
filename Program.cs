@@ -1,86 +1,54 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using PARQUEADEROFINAL.Repositories;
-using PARQUEADEROFINAL.Services;
-using PARQUEADEROFINAL.ServicesInterfaces;
-using PARQUEADEROFINAL.Interfaces;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson; 
+using Microsoft.EntityFrameworkCore;
+using WEBFINAL2.IRepositories;
+using WEBFINAL2.Models;
+using WEBFINAL2.Repositories;
+using WEBFINAL2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar los puertos
 builder.WebHost.UseUrls("http://localhost:5006");
 
-// Configurar servicios
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+// Configuración del DbContext para PostgreSQL
+builder.Services.AddDbContext<YourDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Agregar servicios de Swagger
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PARQUEADERO", Version = "EVELYN" });
-});
+// Agregar servicios al contenedor
+builder.Services.AddScoped<IRepository<Pago>, PagoRepository>();
+builder.Services.AddScoped<IRepository<TarifaEstacionamiento>, TarifaEstacionamientoRepository>();
+builder.Services.AddScoped<IRepository<Cliente>, ClienteRepository>();
 
-// Registro de servicios
-builder.Services.AddScoped<ICarroService, CarroService>();
-builder.Services.AddScoped<IClienteService, ClienteService>();
-builder.Services.AddScoped<IIngresoService, IngresoService>();
-builder.Services.AddScoped<ISalidaService, SalidaService>();
 builder.Services.AddScoped<IPagoService, PagoService>();
 builder.Services.AddScoped<ITarifaEstacionamientoService, TarifaEstacionamientoService>();
 
-// Registro de repositorios
-builder.Services.AddScoped<ICarro, CarroRepository>();
-builder.Services.AddScoped<ICliente, ClienteRepository>();
-builder.Services.AddScoped<IIngreso, IngresoRepository>();
-builder.Services.AddScoped<ISalida, SalidaRepository>();
-builder.Services.AddScoped<IPago, PagoRepository>();
-builder.Services.AddScoped<ITarifaEstacionamiento, TarifaEstacionamientoRepository>();
-
-try
+// Agregar Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
 {
-    var app = builder.Build();
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PARQUEADEROEVE", Version = "v1" });
+});
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseDeveloperExceptionPage();
-    }
-    else
-    {
-        app.UseExceptionHandler("/Home/Error");
-        app.UseHsts();
-    }
+var app = builder.Build();
 
-    app.UseHttpsRedirection();
-    app.UseStaticFiles();
-
-    app.UseRouting();
-
-    app.UseAuthorization();
-
+// Configurar el pipeline de solicitudes HTTP
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
-
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "APPLICACION WEB2");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "PARQUEADEROEVE v1");
         c.RoutePrefix = string.Empty; // Para servir Swagger UI en la raíz (http://localhost:5006/)
     });
-
-    app.MapControllers();
-
-    app.Run();
-}
-catch (Exception ex)
-{
-    // Loggear la excepción
-    Console.WriteLine($"Excepción no controlada: {ex}");
 }
 
+app.UseHttpsRedirection();
+app.UseAuthorization();
 
+app.MapControllers();
 
-
+app.Run();
 
 
