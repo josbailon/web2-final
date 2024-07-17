@@ -1,0 +1,2 @@
+# .env.ngrok
+VUE_APP_API_BASE_URL="https://2be5-191-99-252-133.ngrok-free.app/api"
