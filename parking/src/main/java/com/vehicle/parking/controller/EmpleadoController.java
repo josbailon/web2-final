@@ -1,3 +1,4 @@
+// EmpleadoController.java
 package com.vehicle.parking.controller;
 
 import com.vehicle.parking.model.Empleado;
@@ -51,7 +52,7 @@ public class EmpleadoController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEmpleado(@PathVariable Long id) {
         boolean deleted = empleadoService.deleteEmpleado(id);
         if (deleted) {
